@@ -79,5 +79,6 @@
             @yield('content')
         </main>
     </div>
+    @include('layouts.app_script')
 </body>
 </html>
