@@ -14,7 +14,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::all();
+        return view('posts.index', ['posts' => $posts]);
     }
 
     /**
@@ -24,7 +25,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create'); 
     }
 
     /**
@@ -35,7 +36,15 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $id = Auth::id();
+        $post = new Post();
+
+        $post->body = $request->body;
+        $post->user_id = $id;
+
+        $post->save();
+
+        return redirect()->to('/posts');
     }
 
     /**
@@ -46,7 +55,10 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        $user_id = $post->user_id;
+        $user = DB::table('users')->where('id', $user_id)->first();
+
+        return view('posts.detail', ['post' => $post, 'user' => $user]);
     }
 
     /**
@@ -55,9 +67,11 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit($id)
     {
-        //
+        $post = Post::findOrFall($id);
+
+        return view('posts.edit', ['post' => $post]);
     }
 
     /**
@@ -67,9 +81,12 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $id)
     {
-        //
+        $post = \App\Post::findOrFall($id);
+        $post->body = $request->body;
+
+        $post->save();
     }
 
     /**
@@ -78,8 +95,12 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
-        //
+        $post = App\Post::find($id);
+
+        $post->delete();
+
+        return view('/posts');
     }
 }
